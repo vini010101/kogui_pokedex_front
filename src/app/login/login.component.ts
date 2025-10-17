@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { LoginService } from '../core/services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -9,14 +11,25 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  username: string = '';
-  password: string = '';
+  username = '';
+  password = '';
+  loginError = '';
+
+  private loginService = inject(LoginService);
+  private router = inject(Router);
 
   onSubmit() {
-    if (this.username === 'admin' && this.password === '123') {
-      alert('Login bem-sucedido!');
-    } else {
-      alert('Usuário ou senha inválidos.');
-    }
+    this.loginService.login(this.username, this.password)
+      .subscribe({
+        next: () => {
+          this.loginError = '';
+          // Redireciona para /list
+          this.router.navigate(['/list']);
+        },
+        error: (err) => {
+          console.error('Erro no login:', err);
+          this.loginError = 'Usuário ou senha inválidos.';
+        }
+      });
   }
 }

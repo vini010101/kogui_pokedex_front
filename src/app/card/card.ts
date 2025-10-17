@@ -1,6 +1,6 @@
 import { NgOptimizedImage, TitleCasePipe } from '@angular/common';
 import { Component, input } from '@angular/core';
-import { PokeResult } from '../../core/models/poke-result.model';
+import { PokeResult } from '../core/models/poke-result.model';
 import { PokeImgPipe } from './poke-img-pipe';
 import { RouterLink } from '@angular/router';
 

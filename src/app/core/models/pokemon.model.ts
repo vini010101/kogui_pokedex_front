@@ -1,4 +1,5 @@
 export interface Pokemon {
+  name: any;
   types: {
     type: { name: string };
   }[];
