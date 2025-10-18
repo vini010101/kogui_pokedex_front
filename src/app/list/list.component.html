@@ -17,8 +17,8 @@
 
   <!-- Mensagem de feedback -->
   <div *ngIf="mensagem" class="feedback" [ngClass]="{'erro': erro, 'sucesso': !erro}">
-  {{ mensagem }}
-    </div>
+    {{ mensagem }}
+  </div>
 
   <!-- Lista de cards -->
   <div class="cards" *ngIf="pokemons.length > 0">
@@ -28,7 +28,9 @@
       <p class="pokemon-tipo">Tipo: {{ [p.tipo].join(', ') }}</p>
 
       <div class="actions">
-        <button class="btn-favorito">⭐ Favoritar</button>
+        <button class="btn-favorito" (click)="favoritar(p)">
+          {{ p.Favorito ? '⭐ Remover Favorito' : '☆ Favoritar' }}
+        </button>
         <button class="btn-equipe" (click)="adicionarEquipe(p)">⚔️ Adicionar à equipe</button>
       </div>
     </div>

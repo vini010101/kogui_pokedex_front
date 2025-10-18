@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap, catchError, throwError } from 'rxjs';
 
 export interface Pokemon {
+Favorito: any;
   id: number;
   nome: string;
   tipo: string;

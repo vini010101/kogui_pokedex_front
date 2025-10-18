@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ListService, Pokemon } from '../core/services/list.service';
+import { FavoritesService } from '../core/services/favorites.service';
 
 @Component({
   selector: 'app-list',
@@ -17,6 +18,7 @@ export class ListComponent implements OnInit {
 
   constructor(
     private listService: ListService,
+    private favoritesService: FavoritesService,
     private router: Router
   ) {}
 
@@ -39,25 +41,35 @@ export class ListComponent implements OnInit {
 
   // Adiciona Pokémon à equipe do usuário autenticado
   adicionarEquipe(pokemon: Pokemon): void {
-    console.log('Tentando adicionar Pokémon:', pokemon.nome);
-
-    // debug adicional do token e headers
-    const token = localStorage.getItem('access_token');
-    console.log('Token JWT:', token);
-
     this.listService.adicionarPokemon(pokemon.nome).subscribe({
       next: (res) => {
-        console.log('Resposta do backend:', res);
         this.mensagem = res.detail;
         this.erro = false;
         setTimeout(() => this.mensagem = '', 3000);
       },
       error: (err) => {
-        console.error('Erro ao adicionar Pokémon:', err);
-        if (err.error) {
-          console.error('Detalhes do erro:', err.error);
-        }
         this.mensagem = err.error?.detail || 'Erro desconhecido';
+        this.erro = true;
+        setTimeout(() => this.mensagem = '', 3000);
+      }
+    });
+  }
+
+  // Favorita ou remove dos favoritos
+  favoritar(pokemon: Pokemon): void {
+    this.favoritesService.toggleFavorite(pokemon.id).subscribe({
+      next: (res) => {
+        // Alterna o status local do favorito
+        pokemon.Favorito = !pokemon.Favorito;
+
+        // Mensagem de feedback
+        this.mensagem = res.detail;
+        this.erro = false;
+        setTimeout(() => this.mensagem = '', 3000);
+      },
+      error: (err) => {
+        console.error('Erro ao favoritar:', err);
+        this.mensagem = err.error?.detail || 'Erro ao favoritar';
         this.erro = true;
         setTimeout(() => this.mensagem = '', 3000);
       }
