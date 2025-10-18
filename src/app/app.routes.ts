@@ -14,6 +14,14 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
 
+
+  // Tela de registro
+  {
+    path: 'register',
+    loadComponent: () => import('./register/register.component').then(c => c.RegisterComponent),
+  },
+
+
   // Listagem de Pokémon com filtros
   // Listagem de Pokémon com filtros
   {

@@ -1,25 +1,38 @@
-// src/app/core/services/team.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, catchError, throwError, tap } from 'rxjs';
 import { Pokemon } from '../models/pokemon.model';
 
 @Injectable({ providedIn: 'root' })
 export class TeamService {
-  private storageKey = 'team';
-
-  getTeam(): Pokemon[] {
-    return JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+  removeFromTeam(id: number) {
+    throw new Error('Method not implemented.');
   }
+  private http = inject(HttpClient);
+  private baseUrl = 'http://127.0.0.1:8000/api/pokemons/equipe/';
 
-  addToTeam(pokemon: Pokemon): void {
-    const team = this.getTeam();
-    if (team.length < 6 && !team.find(p => p.name === pokemon.name)) {
-      team.push(pokemon);
-      localStorage.setItem(this.storageKey, JSON.stringify(team));
+  private getToken(): string {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.error('[TeamService] Nenhum token JWT encontrado. Usuário não autenticado.');
+      throw new Error('Usuário não autenticado');
     }
+    return token;
   }
 
-  removeFromTeam(pokemonName: string): void {
-    const team = this.getTeam().filter(p => p.name !== pokemonName);
-    localStorage.setItem(this.storageKey, JSON.stringify(team));
+  // GET - busca os Pokémons da equipe
+  getTeam(): Observable<Pokemon[]> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.getToken()}`,
+    });
+
+    console.warn('[TeamService] Buscando equipe de batalha...');
+    return this.http.get<Pokemon[]>(this.baseUrl, { headers }).pipe(
+      tap(() => console.info('[TeamService] Equipe carregada com sucesso.')),
+      catchError((err) => {
+        console.error('[TeamService] Erro ao carregar equipe:', err);
+        return throwError(() => err);
+      })
+    );
   }
 }

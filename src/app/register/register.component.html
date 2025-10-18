@@ -1,0 +1,21 @@
+<div class="login-container">
+  <h2>Registrar Usuário</h2>
+  <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+    <label for="username">Usuário:</label>
+    <input type="text" id="username" required [(ngModel)]="username" name="username">
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" required [(ngModel)]="email" name="email">
+
+    <label for="password">Senha:</label>
+    <input type="password" id="password" required [(ngModel)]="password" name="password">
+
+    <button type="submit" [disabled]="!registerForm.form.valid">Registrar</button>
+  </form>
+
+  @if (registerError) {
+    <div class="alert">
+      {{ registerError }}
+    </div>
+  }
+</div>

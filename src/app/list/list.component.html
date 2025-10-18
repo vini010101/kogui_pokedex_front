@@ -1,0 +1,36 @@
+<nav class="navbar">
+  <div class="navbar-logo">KoguiDex</div>
+  <div class="navbar-links">
+    <a routerLink="/list" routerLinkActive="active">Pokémons</a>
+    <a routerLink="/favorites" routerLinkActive="active">Favoritos</a>
+    <a routerLink="/team" routerLinkActive="active">Equipe de Batalha</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 class="titulo">Lista de Pokémons</h1>
+
+  <!-- Mensagem de carregamento -->
+  <div *ngIf="pokemons.length === 0" class="loading">
+    Carregando Pokémons...
+  </div>
+
+  <!-- Mensagem de feedback -->
+  <div *ngIf="mensagem" class="feedback" [ngClass]="{'erro': erro, 'sucesso': !erro}">
+  {{ mensagem }}
+    </div>
+
+  <!-- Lista de cards -->
+  <div class="cards" *ngIf="pokemons.length > 0">
+    <div *ngFor="let p of pokemons" class="card">
+      <img [src]="p.imagem" [alt]="p.nome" class="pokemon-img" />
+      <h2 class="pokemon-nome">{{ p.nome | titlecase }}</h2>
+      <p class="pokemon-tipo">Tipo: {{ [p.tipo].join(', ') }}</p>
+
+      <div class="actions">
+        <button class="btn-favorito">⭐ Favoritar</button>
+        <button class="btn-equipe" (click)="adicionarEquipe(p)">⚔️ Adicionar à equipe</button>
+      </div>
+    </div>
+  </div>
+</div>
