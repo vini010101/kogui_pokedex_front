@@ -10,6 +10,22 @@
 <div class="container">
   <h1 class="titulo">Lista de Pokémons</h1>
 
+  <!-- Filtros -->
+  <div class="filtros">
+    <input
+      type="text"
+      placeholder="Pesquisar Pokémon pelo nome"
+      [value]="busca"
+      (input)="onBuscaChange($event)"
+      class="search-input"
+    />
+
+    <select [(ngModel)]="filtroTipo" class="search-input">
+      <option value="">Todos os tipos</option>
+      <option *ngFor="let tipo of tiposDisponiveis" [value]="tipo">{{ tipo }}</option>
+    </select>
+  </div>
+
   <!-- Mensagem de carregamento -->
   <div *ngIf="pokemons.length === 0" class="loading">
     Carregando Pokémons...
@@ -20,19 +36,29 @@
     {{ mensagem }}
   </div>
 
-  <!-- Lista de cards -->
-  <div class="cards" *ngIf="pokemons.length > 0">
-    <div *ngFor="let p of pokemons" class="card">
+  <!-- Lista de cards filtrados -->
+  <div class="cards" *ngIf="pokemonsFiltrados().length > 0">
+    <div *ngFor="let p of pokemonsFiltrados()" class="card">
       <img [src]="p.imagem" [alt]="p.nome" class="pokemon-img" />
       <h2 class="pokemon-nome">{{ p.nome | titlecase }}</h2>
-      <p class="pokemon-tipo">Tipo: {{ [p.tipo].join(', ') }}</p>
+      <p class="pokemon-tipo">Tipo: {{ ($any(p.tipo).join?.(', ') || p.tipo) }}</p>
 
       <div class="actions">
         <button class="btn-favorito" (click)="favoritar(p)">
           {{ p.Favorito ? '⭐ Remover Favorito' : '☆ Favoritar' }}
         </button>
-        <button class="btn-equipe" (click)="adicionarEquipe(p)">⚔️ Adicionar à equipe</button>
+        <button class="btn-equipe" (click)="alterarEquipe(p)">
+          {{ p.GrupoBatalha ? '⚔️ Remover da equipe' : '⚔️ Adicionar à equipe' }}
+        </button>
+        <button class="btn-detalhes" (click)="verDetalhes(p)">
+        🔍 Detalhes
+      </button>
       </div>
     </div>
+  </div>
+
+  <!-- Nenhum Pokémon encontrado -->
+  <div *ngIf="pokemonsFiltrados().length === 0 && pokemons.length > 0" class="loading">
+    Nenhum Pokémon encontrado.
   </div>
 </div>

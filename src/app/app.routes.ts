@@ -43,12 +43,11 @@ export const routes: Routes = [
 },
 
   // Detalhes de Pokémon
- // Detalhes de Pokémon
-{
-  path: 'details/:name', // opcional: prefixo "details" para diferenciar de outras rotas
-  loadComponent: () =>
-    import('./details/details.component').then(c => c.DetailsComponent),
-},
+  {
+    path: 'details/:name', // parâmetro de nome do Pokémon
+    loadComponent: () =>
+      import('./details/details.component').then(c => c.DetailsComponent),
+  },
 
   // Qualquer rota desconhecida
   {

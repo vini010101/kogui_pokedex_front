@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap, catchError, throwError } from 'rxjs';
 
 export interface Pokemon {
+codigo: any;
+  GrupoBatalha: boolean;
 Favorito: any;
   id: number;
   nome: string;
@@ -14,6 +16,9 @@ Favorito: any;
   providedIn: 'root',
 })
 export class ListService {
+  getPokemonDetail(id: number) {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = 'http://127.0.0.1:8000/api/pokemons';
 
   constructor(private http: HttpClient) {}

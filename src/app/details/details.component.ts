@@ -1,46 +1,58 @@
-import { NgOptimizedImage, TitleCasePipe, NgIf, NgFor, AsyncPipe } from '@angular/common';
-import { Component, Input, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+// src/app/details/details.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { DetailsService } from '../core/services/details.service';
 import { Pokemon } from '../core/models/pokemon.model';
-import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'poke-details',
+  selector: 'app-details',
   standalone: true,
-  imports: [TitleCasePipe, NgOptimizedImage, RouterLink, NgIf, NgFor, AsyncPipe],
-  template: `
-    <ng-container *ngIf="pokemon$ | async as pokemon; else loading">
-      <div class="poke-details">
-        <img
-          width="200"
-          height="200"
-          [ngSrc]="pokemon.sprites.front_default"
-          [alt]="name"
-        />
-
-        <h1 class="title">{{ name | titlecase }}</h1>
-
-        <div>
-          <span *ngFor="let type of pokemon.types" class="type-badge">
-            {{ type.type.name | titlecase }}
-          </span>
-        </div>
-
-        <a routerLink="/" class="back-link">← Back to Pokémon List</a>
-      </div>
-    </ng-container>
-
-    <ng-template #loading>
-      <p>Loading...</p>
-    </ng-template>
-  `,
-  styleUrls: ['./details.component.css'],
+  imports: [CommonModule, RouterModule],
+  templateUrl: './details.component.html',
+  styleUrls: ['./details.component.css']
 })
-export class DetailsComponent {
-  @Input() name!: string;
+export class DetailsComponent implements OnInit {
+  pokemon?: Pokemon;
+  mensagem: string = '';
+  erro: boolean = false;
 
-  private readonly detailsService = inject(DetailsService);
+  constructor(
+    private route: ActivatedRoute,
+    private detailsService: DetailsService,
+    private router: Router
+  ) {}
 
-  pokemon$: Observable<Pokemon> = this.detailsService.getPokemon(this.name);
+  ngOnInit(): void {
+    const name = this.route.snapshot.paramMap.get('name');
+    if (name) {
+      this.carregarPokemon(name);
+    } else {
+      this.erro = true;
+      this.mensagem = 'Pokémon não especificado.';
+    }
+  }
+
+  carregarPokemon(name: string): void {
+    const id = Number(name);
+    if (Number.isNaN(id)) {
+      this.erro = true;
+      this.mensagem = 'ID de Pokémon inválido.';
+      console.error('[DetailsComponent] ID inválido:', name);
+      return;
+    }
+
+    this.detailsService.getPokemon(id).subscribe({
+      next: (data) => this.pokemon = data,
+      error: (err) => {
+        this.erro = true;
+        this.mensagem = 'Erro ao carregar Pokémon.';
+        console.error(err);
+      }
+    });
+  }
+
+  voltar(): void {
+    this.router.navigate(['/list']);
+  }
 }
